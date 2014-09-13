@@ -9,8 +9,10 @@ set output-meta on
 set convert-meta off
 
 # History
-export HISTCONTROL=erasedups # Don't save duplicate lines
-alias hist='history | grep $1'
+export HISTCONTROL=erasedup #doesn't save duplicate lines
+function hist() {
+	( [ -z "$1" ] && history) || history | grep "$@"
+}
 
 # Shortcuts
 alias cd..="cd .."
