@@ -23,7 +23,12 @@ alias ls="ls -G"
 alias grep='grep --color=auto'
 alias x='kill -9 0'
 
+# Editors
 export EDITOR='vim'
+alias st='open -a "Sublime Text"'
+
+# OS X + brew updates
+alias sysupdate='sudo softwareupdate -i -a; brew update; brew upgrade'
 
 # Git
 alias gc="git checkout"
