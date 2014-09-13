@@ -40,16 +40,14 @@ alias gb="git branch"
 alias glog="git log --oneline --graph --decorate"
 alias groot='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
 alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
+alias gdiff="git diff"
 
 #############
 # PS1 + Git #
 #############
 function parse_git_status {
-        local gs=`gs -unormal 2> /dev/null | tail -n1`
-# Linux
-#       ( [[ $gs == *"but"* ]] && echo -e "\e[0;33m" ) || ( [[ $gs != *"nothing to commit"* ]] && echo -e "\e[0;31m" )
-# OS X
-       ( [[ $gs == *"but"* ]] && echo -e "\x1B[0;33m" ) || ( [[ $gs != *"nothing to commit"* ]] && echo -e "\x1B[0;31m" )
+	local gs=`gs -unormal 2> /dev/null | tail -n1`
+	( [[ $gs == *"but"* ]] && echo -e "\x1B[0;33m" ) || ( [[ $gs != *"nothing to commit"* ]] && echo -e "\x1B[0;31m" )
 }
 
 function parse_git_branch {
