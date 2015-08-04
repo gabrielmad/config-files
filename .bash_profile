@@ -22,6 +22,8 @@ alias l="ls -lFha"
 alias ls="ls -G"
 alias grep='grep --color=auto'
 alias x='kill -9 0'
+alias iossimulator='open /Applications/Xcode.app/Contents/Developer/Applications/iOS\ Simulator.app'
+
 
 # Editors
 export EDITOR='vim'
@@ -34,7 +36,7 @@ alias sysupdate='sudo softwareupdate -i -a; brew update; brew upgrade'
 alias gc="git checkout"
 alias gco="git commit";
 alias gcb="git rev-parse --abbrev-ref HEAD 2> /dev/null"
-alias gpb="git push -u origin `gcb`"
+alias gpb="git push -u origin $(gcb)"
 alias gs="git status"
 alias gb="git branch"
 alias glog="git log --oneline --graph --decorate"
