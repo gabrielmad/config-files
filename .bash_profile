@@ -35,7 +35,7 @@ alias sysupdate='sudo softwareupdate -i -a; brew update; brew upgrade'
 # Git
 alias gc="git checkout"
 alias gco="git commit";
-alias gcb="git rev-parse --abbrev-ref HEAD 2> /dev/null"
+alias gcb="git symbolic-ref HEAD 2> /dev/null | sed -e 's,.*/\(.*\),\1,'"
 alias gpb="git push -u origin $(gcb)"
 alias gs="git status"
 alias gb="git branch"
