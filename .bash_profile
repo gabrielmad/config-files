@@ -43,18 +43,66 @@ alias glog="git log --oneline --graph --decorate"
 alias groot='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
 alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 alias gdiff="git diff"
+gcn() {
+  local branches=($(gb | grep $1 | tr -d ' |*'))
+  local branch
 
-#############
-# PS1 + Git #
-#############
-function parse_git_status {
-	local gs=`gs -unormal 2> /dev/null | tail -n1`
-	( [[ $gs == *"but"* ]] && echo -e "\x1B[0;33m" ) || ( [[ $gs != *"nothing to commit"* ]] && echo -e "\x1B[0;31m" )
+  case ${#branches[@]} in
+    0) echo "No branch matching '*$1*' criteria was found"; return;;
+    1) branch=$branches
+  esac
+
+  if [[ -z $branch ]]; then
+    select branch in ${branches[@]};
+    do
+      break
+    done
+  fi
+  gc $branch
 }
 
-function parse_git_branch {
-        local gcb=`gcb`
-        [[  $gcb != "" ]] && echo $(parse_git_status)' ['$gcb']'
+# Kubernetes
+alias k='kubectl'
+alias kget='k get -o wide'
+alias kcontext='k config get-contexts'
+alias kcc='k config current-context'
+alias kuse='k config use-context'
+alias kdes='k describe'
+alias kci='k cluster-info'
+alias kcm='k get configmap -o yaml'
+klog() {
+  k logs -f `kpod $1`
+}
+kpod() {
+ kget pods | grep $1 | awk '{print $1}'
+}
+kcontainer() {
+ kget deployments | grep $1 | awk '{print $1}'
+}
+kbash() {
+ local pod=`kpod $1`
+ local container=`kcontainer $1`
+ k exec -it $pod -c $container -- /bin/bash
 }
 
-export PS1='\h:\[\e[0;32m\]\W \[\e[0;0m\]\u\[\e[0;36m\]\[$(parse_git_branch)\]\[\e[0;0m\]$ '
+##########################
+# PS1 + Git + Kubernetes #
+##########################
+parse_git_status() {
+    local_gs=$(gs -unormal 2> /dev/null | tail -n1; exit ${PIPESTATUS[0]})
+    local error=$?
+    local gs=$local_gs
+    ( [[ $error -ne 0 ]] && echo -e "\x1B\e[92m " ) || ( [[ $gs == *"but"* ]] && echo -e "\x1B[0;33m" ) || ( [[ $gs && $gs != *"nothing to commit"* ]] && echo -e "\x1B[0;31m" )
+}
+
+parse_git_branch() {
+  local gcb=`gcb`
+  [[  $gcb != "" ]] && echo $(parse_git_status)' ['$gcb']'
+}
+
+parse_kubernetes_context() {
+  local kcc=`kcc`
+  [[ $kcc != "" ]] && echo ' ('$kcc')'
+}
+
+export PS1='\h:\[\e[0;32m\]\W \[\e[0;0m\]\u\[\e[0;35m\]\[$(parse_kubernetes_context)\]\[\e[0;36m\]$(parse_git_branch 2>/dev/null)\[\e[0;0m\]$ '
